@@ -1,10 +1,10 @@
-package lv2;
+package lv3;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 // 사칙연산을 수행하는 계산기 클래스
 public class Calculator {
-
     // 연산자의 우선순위를 반환하는 정적 메서드
     private static int priority(char ch) {
         return switch (ch) {
@@ -36,9 +36,19 @@ public class Calculator {
             if (token.matches("\\d+")) { // 숫자인 경우
                 stack.push(Integer.parseInt(token));
             } else { // 연산자인 경우
-                int secondInt = stack.pop();
-                int firstInt = stack.pop();
-                stack.push(postFix(firstInt, secondInt, token.charAt(0))); // 연산 결과를 스택에 다시 푸시
+                int firstInt;
+                int secondInt;
+                try {
+                    secondInt =stack.pop();
+                    firstInt =stack.pop();
+                }catch (EmptyStackException e) {
+                    System.out.println("e.getMessage() = " + e.getMessage());
+                    return "입력이 필요합니다";
+                }try {
+                    stack.push(postFix(firstInt, secondInt, token.charAt(0))); // 연산 결과를 스택에 다시 푸시
+                }catch (ArithmeticException e) {
+                    return "0으로 나눌 수 없습니다";
+                }
             }
         }
         return Integer.toString(stack.pop()); // 최종 결과 반환
@@ -46,16 +56,20 @@ public class Calculator {
 
     // 연산자에 따른 사칙연산 수행
     private int postFix(int a, int b, char oper) {
-        return switch (oper) {
-            case '+' -> a + b;
-            case '-' -> a - b;
-            case '*' -> a * b;
-            case '/' -> a / b;
-            case '%' -> a % b;
-            default -> 0; // 잘못된 연산자는 기본값 0 반환
-        };
+        if(oper == '+') {
+            return a+b;
+        }else if(oper == '-'){
+            return a-b;
+        }else if(oper == '*'){
+            return a*b;
+        }else if(oper == '/'){
+            return a/b;
+        }else if(oper == '%'){
+            return a%b;
+        }else {
+            return 0;
+        }
     }
-
     // 중위 표기법을 후위 표기법으로 변환하는 메서드
     private String yaldCalcultate(String textField) {
         StringBuilder postfix = new StringBuilder(); // 변환된 후위 표기법 문자열

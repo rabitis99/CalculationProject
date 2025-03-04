@@ -1,4 +1,4 @@
-package lv2;
+package lv3;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,8 +18,7 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
     private JTextField resultField = new JTextField(textField, 3); // 최근 계산 결과 표시 필드
     private JTextArea resultsField = new JTextArea(10, 32); // 모든 결과 기록을 표시하는 텍스트 영역
 
-    // 계산기 로직을 수행하는 Calulator 클래스의 인스턴스 (타이핑 오류 있음)
-    private Calculator calulator = new Calculator(); // "Calculator"가 맞는 클래스명으로 보임
+    private  Calculator calulator = new Calculator(); // 계산기 로직을 수행하는 Calculator 클래스의 인스턴스
 
     // 창의 제목
     private String title = "사칙 연산 계산기";
@@ -33,11 +32,6 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
     // 결과값을 누적할 문자열
     private String storeListor = "";
 
-    // 생성자: GUI 초기화
-    public Gui() {
-        setGui();
-    }
-
     // 버튼 클릭 이벤트 처리
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -46,14 +40,19 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
         if (button.equals("AC")) { // 전체 지우기
             textField = "";
             jTextField.setText(textField);
-            return;
         }
         else if (button.equals("=")) { // 계산 실행
             String yardesult = calulator.releaseYaldCalculator(textField); // 중위 → 후위 변환
-            textField = calulator.releaseSolution(yardesult); // 후위 연산식 계산 결과 반환
-            storeList.add(textField); // 계산 결과 저장
-            resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
-            textField = "";
+            textField = calulator.releaseSolution(yardesult);// 후위 연산식 계산 결과 반환
+            jTextField.setText(textField);
+            if (jTextField.getText().equals("입력이 필요합니다")||jTextField.getText().equals("0으로 나눌 수 없습니다")){
+                textField = "";
+            }
+            else{
+                storeList.add(textField); // 계산 결과 저장
+                resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
+                textField = "";
+            }
         }
         else if (button.equals("결과값")) { // 저장된 결과값 출력
             storeListor = ""; // 기존 값 초기화
@@ -116,7 +115,7 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
     }
 
     // GUI 초기 설정
-    private void setGui() {
+    public void setGui() {
         setTitle("사칙 연산 계산기");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         contentPane.setBackground(Color.YELLOW);
