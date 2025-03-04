@@ -1,7 +1,4 @@
-package lv3;
-
-import lv2.Postfix;
-import lv2.Solution;
+package lv2;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,16 +11,15 @@ import java.util.List;
 
 // GUI 클래스는 JFrame을 확장하고, ActionListener 및 KeyListener 인터페이스를 구현
 public class Gui extends JFrame implements ActionListener, KeyListener {
-
     // 입력 필드 관련 변수
     private String textField = ""; // 연산식을 저장하는 문자열
     private JTextField jTextField = new JTextField(textField, 29); // 메인 입력 필드
     private JTextField resultField = new JTextField(textField, 3); // 최근 계산 결과 표시 필드
     private JTextArea resultsField = new JTextArea(10, 32); // 모든 결과 기록을 표시하는 텍스트 영역
-    private lv3.Postfix postfix = new lv3.Postfix();
-    private lv3.Solution solution = new lv3.Solution();
 
-
+    // 계산기 로직을 수행하는 클래스의 인스턴스 (타이핑 오류 있음)
+    private Postfix postfix = new Postfix();
+    private Solution solution = new Solution();
     // 창의 제목
     private String title = "사칙 연산 계산기";
 
@@ -36,6 +32,11 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
     // 결과값을 누적할 문자열
     private String storeListor = "";
 
+    // 생성자: GUI 초기화
+    public Gui() {
+        setGui();
+    }
+
     // 버튼 클릭 이벤트 처리
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -44,19 +45,14 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
         if (button.equals("AC")) { // 전체 지우기
             textField = "";
             jTextField.setText(textField);
+            return;
         }
         else if (button.equals("=")) { // 계산 실행
             String yardesult = postfix.releasePostfix(textField); // 중위 → 후위 변환
-            textField = solution.releaseSolution(yardesult);// 후위 연산식 계산 결과 반환
-            jTextField.setText(textField);
-            if (jTextField.getText().equals("입력이 필요합니다")||jTextField.getText().equals("0으로 나눌 수 없습니다")){
-                textField = "";
-            }
-            else{
-                storeList.add(textField); // 계산 결과 저장
-                resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
-                textField = "";
-            }
+            textField = solution.releaseSolution(yardesult); // 후위 연산식 계산 결과 반환
+            storeList.add(textField); // 계산 결과 저장
+            resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
+            textField = "";
         }
         else if (button.equals("결과값")) { // 저장된 결과값 출력
             storeListor = ""; // 기존 값 초기화
@@ -110,8 +106,8 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
                 jTextField.setText(textField);
             }
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) { // 엔터 입력 시 계산 실행
-            String yardesult = postfix.releasePostfix(textField); // 중위 → 후위 변환
-            textField = solution.releaseSolution(yardesult);// 후위 연산식 계산 결과 반환
+            String yardesult = postfix.releasePostfix(textField);
+            textField = solution.releaseSolution(yardesult);
             jTextField.setText(textField);
             textField = "";
         }
@@ -119,7 +115,7 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
     }
 
     // GUI 초기 설정
-    public void setGui() {
+    private void setGui() {
         setTitle("사칙 연산 계산기");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         contentPane.setBackground(Color.YELLOW);
@@ -170,7 +166,6 @@ public class Gui extends JFrame implements ActionListener, KeyListener {
         setVisible(true);
         jTextField.addKeyListener(this);
         jTextField.requestFocusInWindow();
-
         contentPane.add(jTextField, BorderLayout.SOUTH);
         contentPane.add(resultField, BorderLayout.SOUTH);
         contentPane.add(panel, BorderLayout.CENTER);
