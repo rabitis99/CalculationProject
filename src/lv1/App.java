@@ -94,9 +94,6 @@ public class App extends JFrame implements ActionListener, KeyListener {
         JPanel panel = new JPanel();// 버튼 패널 생성
         panel.setLayout(new GridLayout(5, 4, 5, 5));//패널 위치조정
 
-
-
-
         // 패널에 JButton값 생성하기-구글계산기(사칙연산 참조)
         String[] buttons ={"(",")","%","AC","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"};//계산기에 넣을 순서
         for (String text:buttons){
