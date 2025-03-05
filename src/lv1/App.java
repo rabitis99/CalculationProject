@@ -94,9 +94,6 @@ public class App extends JFrame implements ActionListener, KeyListener {
         JPanel panel = new JPanel();// 버튼 패널 생성
         panel.setLayout(new GridLayout(5, 4, 5, 5));//패널 위치조정
 
-
-
-
         // 패널에 JButton값 생성하기-구글계산기(사칙연산 참조)
         String[] buttons ={"(",")","%","AC","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"};//계산기에 넣을 순서
         for (String text:buttons){
@@ -106,7 +103,7 @@ public class App extends JFrame implements ActionListener, KeyListener {
         }
         contentPane.add(panel);// 페널 프레임 추가
         setVisible(true);//프레임 보이기
-        jTextField.addKeyListener(this);//chatgpt사용
+        jTextField.addKeyListener(this);
 
 
         contentPane.add(jTextField,BorderLayout.NORTH);
@@ -164,7 +161,7 @@ public class App extends JFrame implements ActionListener, KeyListener {
             if (Character.isDigit(token)) {
                 while (i < textField.length() && Character.isDigit(textField.charAt(i))) {
                     postfix.append(textField.charAt(i));
-                    i++;//chatGpt이용
+                    i++;
                 }
                 postfix.append(" "); // 숫자 구분을 위해 공백 추가
                 i--; // for 루프에서 추가 증가를 방지
@@ -186,7 +183,7 @@ public class App extends JFrame implements ActionListener, KeyListener {
             }
         }
         while (!operatorStack.isEmpty()) {
-            postfix.append(operatorStack.pop()).append(" ");// 이게 왜 될까?
+            postfix.append(operatorStack.pop()).append(" ");
         }
         return postfix.toString();
     }

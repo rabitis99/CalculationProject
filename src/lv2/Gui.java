@@ -6,98 +6,176 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 
+// GUI 클래스는 JFrame을 확장하고, ActionListener 및 KeyListener 인터페이스를 구현
 public class Gui extends JFrame implements ActionListener, KeyListener {
-    //생성자
-    private String textField ="";//초기에는 아무것도 보이지 않게 설정(초기 값 null 발생 예방)
-    private JTextField jTextField = new JTextField(textField,24);//초기값 null 발생 제한
-    Calulator calulator = new Calulator();
+    // 입력 필드 관련 변수
+    private String textField = ""; // 연산식을 저장하는 문자열
+    private JTextField jTextField = new JTextField(textField, 29); // 메인 입력 필드
+    private JTextField resultField = new JTextField(textField, 3); // 최근 계산 결과 표시 필드
+    private JTextArea resultsField = new JTextArea(10, 32); // 모든 결과 기록을 표시하는 텍스트 영역
 
+    // 계산기 로직을 수행하는 클래스의 인스턴스 (타이핑 오류 있음)
+    private Postfix postfix = new Postfix();
+    private Solution solution = new Solution();
+    // 창의 제목
+    private String title = "사칙 연산 계산기";
+
+    // 계산 결과 저장 리스트
+    private List<String> storeList = new ArrayList<>();
+
+    // 컨텐트 패널 선언
+    private Container contentPane = getContentPane();
+
+    // 결과값을 누적할 문자열
+    private String storeListor = "";
+
+    // 생성자: GUI 초기화
     public Gui() {
         setGui();
     }
 
-
+    // 버튼 클릭 이벤트 처리
     @Override
     public void actionPerformed(ActionEvent e) {
-        String button = e.getActionCommand();// getActionCommand() : 이벤트를 처리한 컴포넌트(버튼)의 타이틀(문자열)을 가져오는 메서드
-        if (button.equals("AC")){
-            textField="";
+        String button = e.getActionCommand(); // 클릭된 버튼의 텍스트 가져오기
+
+        if (button.equals("AC")) { // 전체 지우기
+            textField = "";
             jTextField.setText(textField);
             return;
         }
-        if (button.equals("=")) {
-            String yardesult=calulator.yaldCalcultate(textField);
-            textField=calulator.solution(yardesult);
-            jTextField.setText(textField);
-            textField="";
+        else if (button.equals("=")) { // 계산 실행
+            String yardesult = postfix.releasePostfix(textField); // 중위 → 후위 변환
+            textField = solution.releaseSolution(yardesult); // 후위 연산식 계산 결과 반환
+            storeList.add(textField); // 계산 결과 저장
+            resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
+            textField = "";
         }
-        else {
-            textField=textField.concat(button);
-            jTextField.setText(textField);
+        else if (button.equals("결과값")) { // 저장된 결과값 출력
+            storeListor = ""; // 기존 값 초기화
+            for (String result : storeList) {
+                storeListor += result + "\n"; // 개행 추가
+            }
+            resultsField.setText(storeListor);
         }
-
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        char keyChar = e.getKeyChar();
-
-        if (Character.isDigit(keyChar) || "+-*/%()".indexOf(keyChar) != -1) {
-            textField = textField.concat(String.valueOf(keyChar));
-            jTextField.setText(textField);
+        else if (button.equals("최근 결과 삭제")) { // 마지막 결과 삭제
+            if (!storeList.isEmpty()) {
+                storeList.remove(storeList.size() - 1);
+                storeListor = "";
+                for (String result : storeList) {
+                    storeListor += result + "\n";
+                }
+                resultsField.setText(storeListor);
+            }
         }
-        e.consume(); // JTextField에 기본 입력이 발생하지 않도록 이벤트 차단-chatgpt
-
-    }
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+        else if (button.equals("C")) { // 한 글자 지우기
             if (!textField.isEmpty()) {
                 textField = textField.substring(0, textField.length() - 1);
                 jTextField.setText(textField);
             }
-        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            String yardesult = calulator.yaldCalcultate(textField);
-            textField = calulator.solution(yardesult);
-            jTextField.setText(textField);
-            textField = "";
-
         }
-        e.consume(); // JTextField에 기본 입력이 발생하지 않도록 이벤트 차단
-
+        else { // 숫자 및 연산자 입력
+            textField = textField.concat(button);
+            jTextField.setText(textField);
+        }
     }
 
-    private void setGui(){
-        setTitle("사칙 연산 계산기");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 프레임 종료버튼 사용 시 응용 프로그램도 종료시키는 방법
-        Container contentPane = getContentPane(); // 컨텐트팬 선언
-        contentPane.setBackground(Color.YELLOW);// 배경색 설정
-        contentPane.setLayout(new FlowLayout());// 레이아웃 설정
-        setSize(300, 400);//프레임 크기조정
-        contentPane.setFocusable(true);  // 컴포넌트가 포커스를 받을 수 있도록 설정
-        contentPane.requestFocus();     // 컴포넌트에 포커스를 강제로 지정
-        JPanel panel = new JPanel();// 버튼 패널 생성
-        panel.setLayout(new GridLayout(5, 4, 5, 5));//패널 위치조정
-
-        // 패널에 JButton값 생성하기-구글계산기(사칙연산 참조)
-        String[] buttons ={"(",")","%","AC","7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"};//계산기에 넣을 순서
-        for (String text:buttons){
-            JButton button = new JButton(text);// text이름 으로 버튼생성
-            button.addActionListener(this); //addActionLister확인
-            panel.add(button);
+    // 키 입력 이벤트 처리 (타이핑)
+    @Override
+    public void keyTyped(KeyEvent e) {
+        char keyChar = e.getKeyChar();
+        if (Character.isDigit(keyChar) || "+-*/%()".indexOf(keyChar) != -1) {
+            textField = textField.concat(String.valueOf(keyChar));
+            jTextField.setText(textField);
         }
-        contentPane.add(panel);// 페널 프레임 추가
-        setVisible(true);//프레임 보이기
-        jTextField.addKeyListener(this);//chatgpt사용
+        e.consume(); // 기본 입력 차단
+    }
 
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
 
-        contentPane.add(jTextField,BorderLayout.NORTH);
-        jTextField.requestFocusInWindow();// 포커스 설정
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) { // 백스페이스 처리
+            if (!textField.isEmpty()) {
+                textField = textField.substring(0, textField.length() - 1);
+                jTextField.setText(textField);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) { // 엔터 입력 시 계산 실행
+            String yardesult = postfix.releasePostfix(textField);
+            textField = solution.releaseSolution(yardesult);
+            jTextField.setText(textField);
+            textField = "";
+        }
+        e.consume(); // 기본 입력 차단
+    }
+
+    // GUI 초기 설정
+    private void setGui() {
+        setTitle("사칙 연산 계산기");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        contentPane.setBackground(Color.YELLOW);
+        contentPane.setLayout(new FlowLayout());
+        setSize(500, 500);
+
+        contentPane.setFocusable(true);
+        contentPane.requestFocus();
+
+        // 버튼을 담을 패널
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+
+        // 버튼 목록
+        String[] buttons = {"(", ")", "%", "AC", "C",
+                "7", "8", "9", "/", "결과값",
+                "4", "5", "6", "*", "최근 결과 삭제",
+                "1", "2", "3", "-", "=",
+                ".", "0", " ", "+"};
+
+        int row = 0, col = 0;
+        for (String text : buttons) {
+            JButton button = new JButton(text);
+            GridBagConstraints buttonGBC = (GridBagConstraints) gridBagConstraints.clone();
+
+            if (text.equals("=")) {
+                buttonGBC.gridheight = 2; // "=" 버튼은 세로로 2칸 차지
+            } else {
+                buttonGBC.gridheight = 1;
+            }
+
+            buttonGBC.gridx = col;
+            buttonGBC.gridy = row;
+            button.addActionListener(this);
+            panel.add(button, buttonGBC);
+
+            col++;
+            if (col >= 5) { // 한 줄에 5개 버튼 배치
+                col = 0;
+                row++;
+            }
+        }
+
+        setVisible(true);
+        jTextField.addKeyListener(this);
+        jTextField.requestFocusInWindow();
+        contentPane.add(jTextField, BorderLayout.SOUTH);
+        contentPane.add(resultField, BorderLayout.SOUTH);
+        contentPane.add(panel, BorderLayout.CENTER);
+        contentPane.add(resultsField, BorderLayout.NORTH);
+        contentPane.setVisible(true);
+    }
+
+    // 창 제목 설정 메서드 오버라이드
+    public void setTitle(String title) {
+        this.title = title;
+        super.setTitle(this.title);
     }
 }
