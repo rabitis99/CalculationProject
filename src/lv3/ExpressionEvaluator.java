@@ -28,10 +28,16 @@ public class ExpressionEvaluator extends ArithmeticCalculator {
                     return "0으로 나눌 수 없습니다";
                 }
             }
-            double res= stack.pop();
-            if ()
         }
-        return Double.toString(stack.pop()); // 최종 결과 반환
+        // 최종 결과 반환(형변환)-제네릭이 아님
+        double res= stack.pop();
+        if (res==(int)res) {
+            return Integer.toString((int) res);
+        }
+        else {
+            return Double.toString(res);
+        }
+
     }
     // 사칙연산을 수행하는 메서드 (외부에서 호출할 수 있는 인터페이스 역할)
     public String releaseExpressionEvaluator (String solution) {
@@ -39,4 +45,3 @@ public class ExpressionEvaluator extends ArithmeticCalculator {
     }
 
 }
-
