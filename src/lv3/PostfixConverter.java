@@ -2,7 +2,7 @@ package lv3;
 
 import java.util.Stack;
 
-public class Postfix extends Priority {
+public class PostfixConverter extends OperatorPriority {
     // 중위 표현식을 후위 표현식으로 변환하는 메서드 (외부 인터페이스 역할)
     public String releasePostfix(String yaldCalculator) {
         return this.makePostifix(yaldCalculator); // private 메서드 호출

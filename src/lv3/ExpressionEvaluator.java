@@ -1,12 +1,11 @@
 package lv3;
 
-import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
 // 후위 표기법(Reverse Polish Notation, RPN) 계산 수행
-public class Solution extends Calculator{
-    private String solute(String str) {
+public class ExpressionEvaluator extends ArithmeticCalculator {
+    private String evaluate(String str) {
         Stack<Double> stack = new Stack<>();
         stack.push(0.0); // 음수 연산 방지용 (0을 미리 넣어둠)
 
@@ -22,12 +21,9 @@ public class Solution extends Calculator{
                 try {
                     secondInt = stack.pop();
                     firstInt = stack.pop();
-                    System.out.println("tokens = " +secondInt );
+                    stack.push(releaseArithmeticCalculator(firstInt, secondInt, Operator.fromChar(token.charAt(0)))); // 연산 결과를 스택에 다시 푸시
                 } catch (EmptyStackException e) {
                     return "입력이 필요합니다";
-                }
-                try {
-                    stack.push(releaseCalculation(firstInt, secondInt, Operator.fromChar(token.charAt(0)))); // 연산 결과를 스택에 다시 푸시
                 } catch (ArithmeticException e) {
                     return "0으로 나눌 수 없습니다";
                 }
@@ -36,8 +32,8 @@ public class Solution extends Calculator{
         return Double.toString(stack.pop()); // 최종 결과 반환
     }
     // 사칙연산을 수행하는 메서드 (외부에서 호출할 수 있는 인터페이스 역할)
-    public String releaseSolution(String solution) {
-        return this.solute(solution); // private 메서드 호출
+    public String releaseExpressionEvaluator (String solution) {
+        return this.evaluate(solution); // private 메서드 호출
     }
 
 }
