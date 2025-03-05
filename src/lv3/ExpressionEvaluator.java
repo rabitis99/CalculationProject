@@ -28,6 +28,8 @@ public class ExpressionEvaluator extends ArithmeticCalculator {
                     return "0으로 나눌 수 없습니다";
                 }
             }
+            double res= stack.pop();
+            if ()
         }
         return Double.toString(stack.pop()); // 최종 결과 반환
     }
