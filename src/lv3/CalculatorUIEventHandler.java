@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.joining;
@@ -13,9 +14,9 @@ import static java.util.stream.Collectors.joining;
 public class CalculatorUIEventHandler extends JFrame implements ActionListener, KeyListener {
     // 입력 필드 관련 변수
     String textField = ""; // 연산식을 저장하는 문자열
-    JTextField jTextField = new JTextField(textField, 29); // 메인 입력 필드
-    JTextField resultField = new JTextField(textField, 3); // 최근 계산 결과 표시 필드
-    JTextArea resultsField = new JTextArea(10, 32); // 모든 결과 기록을 표시하는 텍스트 영역
+    JTextField jTextField = new JTextField(textField, 30); // 메인 입력 필드
+    JTextField resultField = new JTextField(textField, 30); // 최근 계산 결과 표시 필드
+    JTextArea resultsField = new JTextArea(5, 10); // 모든 결과 기록을 표시하는 텍스트 영역
     PostfixConverter postfixConverter = new PostfixConverter();
     ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 
@@ -55,15 +56,20 @@ public class CalculatorUIEventHandler extends JFrame implements ActionListener, 
                 textField = "";
             }
             case "결과값" -> {
+                Collections.reverse(storeList);
                 storeListor = String.join("\n", storeList);
                 resultsField.setText(storeListor);
+                Collections.reverse(storeList);
             }
             case "최근 결과 삭제" -> {
                 if (!storeList.isEmpty()) {
-                    storeList.remove(storeList.size() - 1);
+                    storeList.remove(storeList.size() - 1);//최근값
+//                    storeList.remove(0);//맨처음 데이터 삭제
 //                storeListor=storeList.stream().reduce((a,b)->a+"\n"+b).orElse("");//스트림 람다 적용
+                    Collections.reverse(storeList);//리스트 역방향
                     storeListor = String.join("\n", storeList);
                     resultsField.setText(storeListor);
+                    Collections.reverse(storeList);//리스트 정방향
                 }
             }
             case "C" -> {
@@ -75,15 +81,23 @@ public class CalculatorUIEventHandler extends JFrame implements ActionListener, 
             case "합계" -> {
                 if (!storeList.isEmpty()) {
                     double sumList = storeList.stream().mapToDouble(Double::parseDouble).sum();
-                    resultsField.setText(Double.toString(sumList));
-                    System.out.println("sumList = " + sumList);
+                    if (sumList==(int)sumList){
+                        resultsField.setText(Integer.toString((int)sumList));
+                    }else {
+                        resultsField.setText(Double.toString(sumList));
+                    }
+
+
                 }
             }
             case "평균" -> {
                 if (!storeList.isEmpty()) {
                     double avgList = storeList.stream().mapToDouble(Double::parseDouble).average().getAsDouble();
-                    resultsField.setText(Double.toString(avgList));
-                    System.out.println("avgList = " + avgList);
+                    if (avgList==(int)avgList){
+                        resultsField.setText(Integer.toString((int)avgList));
+                    }else {
+                        resultsField.setText(Double.toString(avgList));
+                    }
                 }
             }
             case "최근값" -> {
