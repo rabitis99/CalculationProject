@@ -7,9 +7,15 @@ public abstract class Calculator {
             case '+' -> a + b;
             case '-' -> a - b;
             case '*' -> a * b;
-            case '/' -> a / b;
-            case '%' -> a % b;
-            default -> 0; // 잘못된 연산자는 기본값 0 반환
+            case '/' -> {
+                if (b == 0) throw new ArithmeticException("0으로 나눌 수 없습니다.");
+                yield a / b;
+            }
+            case '%' -> {
+                if (b == 0) throw new ArithmeticException("0으로 나눌 수 없습니다.");
+                yield a % b;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + oper);
         };
     }
     public int releaseCalculation(int a, int b, char oper){

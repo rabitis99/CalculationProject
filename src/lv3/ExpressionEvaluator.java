@@ -25,7 +25,7 @@ public class ExpressionEvaluator extends ArithmeticCalculator {
                 } catch (EmptyStackException e) {
                     return "입력이 필요합니다";
                 } catch (ArithmeticException e) {
-                    return "0으로 나눌 수 없습니다";
+                    return e.getMessage();
                 }
             }
         }

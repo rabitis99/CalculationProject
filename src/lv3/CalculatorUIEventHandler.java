@@ -48,7 +48,7 @@ public class CalculatorUIEventHandler extends JFrame implements ActionListener, 
                 textField = expressionEvaluator.releaseExpressionEvaluator(yaldesult);// 후위 연산식 계산 결과 반환
                 jTextField.setText(textField);
 
-                if (!jTextField.getText().equals("입력이 필요합니다") && !jTextField.getText().equals("0으로 나눌 수 없습니다")) {
+                if (!jTextField.getText().equals("입력이 필요합니다") && (!jTextField.getText().equals("0으로 나눌 수 없습니다.")&&!jTextField.getText().equals("0에는 나머지가 없습니다."))) {
                     storeList.add(textField); // 계산 결과 저장
                     resultField.setText(storeList.get(storeList.size() - 1)); // 최근 결과 표시
                 }
@@ -102,7 +102,8 @@ public class CalculatorUIEventHandler extends JFrame implements ActionListener, 
             }
             case "최근값" -> {
                 if (!storeList.isEmpty()) {
-                    textField = storeList.get(storeList.size() - 1);
+                    String recentResult = storeList.get(storeList.size() - 1);
+                    textField=textField+recentResult;
                     jTextField.setText(textField);
                 }
             }

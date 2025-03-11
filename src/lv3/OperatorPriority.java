@@ -1,6 +1,6 @@
 package lv3;
 
-public abstract class OperatorPriority {
+public class OperatorPriority {
     // 연산자의 우선순위를 반환하는 정적 메서드
     private int priority(char ch) {
         return switch (ch) {
@@ -10,7 +10,7 @@ public abstract class OperatorPriority {
             default -> -1;       // 기타 문자 (예: 숫자, 공백 등)
         };
     }
-    public int releasPriority(char ch){
+    public int getPriority(char ch){
         return this.priority(ch);
     }
 }

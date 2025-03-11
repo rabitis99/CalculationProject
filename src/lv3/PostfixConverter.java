@@ -5,10 +5,10 @@ import java.util.Stack;
 public class PostfixConverter extends OperatorPriority {
     // 중위 표현식을 후위 표현식으로 변환하는 메서드 (외부 인터페이스 역할)
     public String releasePostfix(String yaldCalculator) {
-        return this.makePostifix(yaldCalculator); // private 메서드 호출
+        return this.coverToPostifix(yaldCalculator); // private 메서드 호출
     }
     // 중위 표기법을 후위 표기법으로 변환하는 메서드
-    private String makePostifix(String textField) {
+    private String coverToPostifix(String textField) {
         StringBuilder postfix = new StringBuilder(); // 변환된 후위 표기법 문자열
         Stack<Character> operatorStack = new Stack<>(); // 연산자를 저장할 스택
 
@@ -34,7 +34,7 @@ public class PostfixConverter extends OperatorPriority {
             }
 
             else if (token == '+' || token == '-' || token == '*' || token == '/' || token == '%') { // 연산자인 경우
-                while (!operatorStack.isEmpty() && operatorStack.peek() != '(' && releasPriority(operatorStack.peek()) >= releasPriority(token)) {
+                while (!operatorStack.isEmpty() && operatorStack.peek() != '(' && getPriority(operatorStack.peek()) >= getPriority(token)) {
                     postfix.append(operatorStack.pop()).append(" "); // 스택에서 연산자를 꺼내 후위 표기법에 추가
                 }
                 operatorStack.push(token); // 현재 연산자를 스택에 추가
